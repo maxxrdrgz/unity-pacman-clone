@@ -30,6 +30,9 @@ public class EnemyAI : MonoBehaviour
     }
 
     // Start is called before the first frame update
+    /** 
+        Upon start, this sets the initial position and direction for the ghost
+    */
     void Start()
     {
         destination = GetFirstDestination();
@@ -50,6 +53,13 @@ public class EnemyAI : MonoBehaviour
         Animate();
     }
 
+    /** 
+        When this script is applied to a ghost gameobject, depending on the name
+        this function will return the initial position.
+
+        @return {Vector3} Returns a vector 3 containing the initial position
+        for a particular ghost
+    */
     Vector3 GetFirstDestination(){
         switch(gameObject.name){
             case "Blu":
@@ -67,10 +77,18 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /** 
+        This function will return a random value from the CurrentDirection enum
+
+        @return {CurrentDirection} returns enum value for CurrentDirection
+    */
     CurrentDirection GetRandDirection(){
         return directions[Random.Range(0, directions.Length)];
     }
 
+    /** 
+        Depending on the direction, this function will set the nextDirection
+    */
     void DetermineNextDirection(){
         switch(direction){
             case CurrentDirection.left:
@@ -88,6 +106,9 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /** 
+        Sets direction to a new direction. This changes the path of the ghosts.
+    */
     void SetCurrentDirection(){
         canMove = false;
         CurrentDirection newDir = GetRandDirection();
@@ -99,10 +120,22 @@ public class EnemyAI : MonoBehaviour
         canMove = true;
     }
 
+    /** 
+        Sets the destination by summing the gameobjects current position and
+        the nextDirection
+    */
     void SetDestination(){
         destination = (Vector2)transform.position + nextDirection;
     }
 
+    /** 
+        This function will use the current gameobjects position plus the given
+        direction to detect if the ghost's nextdirection will hit a wall in the
+        maze, returns true if so.
+
+        @params {Vector 2} coordinates containing a 
+        @return {bool} States if provided direction doesn't run into a wall
+    */
     bool isValidDirection(Vector2 dir){
         Vector2 pos = transform.position;
 
@@ -115,12 +148,20 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /** 
+        By calculating the current direction, using the x and y, the animator
+        params are set.
+    */
     void Animate(){
         Vector2 dir = destination - (Vector2) transform.position;
         animator.SetFloat("x", dir.x);
         animator.SetFloat("y", dir.y);
     }
 
+    /** 
+        Moves the gameobject from it's current position to the destination,
+        otherwise a new destination is generated
+    */
     void Move(){
         if((Vector2)transform.position != destination){
             Vector2 pos = Vector2.MoveTowards(transform.position, destination, speed);
@@ -134,6 +175,11 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /** 
+        Detects collision with the player. Destroys the player upon collision.
+
+        @params {Collider2D} The other Collider2D involved in this collision.
+    */
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.tag == "Player"){
             Destroy(other.gameObject);

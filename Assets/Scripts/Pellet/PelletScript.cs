@@ -16,6 +16,12 @@ public class PelletScript : MonoBehaviour
         
     }
     
+    /** 
+        Detects if this gameobject (pellet) has collided with the player. If so
+        this gameobject gets destroyed.
+
+        @params {Collider2D} The other Collider2D involved in this collision.
+    */
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.tag == "Player"){
             Destroy(gameObject);
